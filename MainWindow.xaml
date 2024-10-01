@@ -1,0 +1,67 @@
+﻿<Window x:Name="MainWind" x:Class="ARCA_WPF_F.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ARCA_WPF_F"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        UseLayoutRounding="True" 
+        Background="Black"
+        Height="500" Width="940"
+        Closed="Window_Closed_1" 
+        Title="ARCA" Icon="/icons8-coder-in-hoodie-96.ico" 
+        WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow" Loaded="MainWind_Loaded">
+
+    <Grid>
+        <Image x:Name="CameraImage" Stretch="Uniform" Source="/CameraError.png"/>
+        <Menu IsMainMenu="True" Height="20"  Background="#4C000000" FontSize="13" Foreground="Yellow" VerticalAlignment="Top">
+            <MenuItem Header="About" Click="MenuItem_Click"/>
+            <MenuItem x:Name="SettingsMenuItem" Header="Settings" Click="SettingsMenuItem_Click"/>
+            <MenuItem x:Name="DebugMenuItem" Header="Debug" IsCheckable="true" IsChecked="False" Checked="DebugMenuItem_Checked" Unchecked="DebugMenuItem_Unchecked"/>
+        </Menu>
+
+        <StackPanel x:Name="DebugPanel" Margin="10 0 10 0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal"  Background="#B2000000" Visibility="Visible">
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+            <StackPanel x:Name="Gamepad_Disc_Label" Visibility="Collapsed">
+                <TextBlock Text="GAMEPAD DISCONNECTED " Foreground="Red"/>
+            </StackPanel>
+            <StackPanel x:Name="DataDebugLabel" Orientation="Horizontal">
+                <TextBlock Text="Steer: " Foreground="Yellow"/>
+                <TextBlock x:Name="SteerLabel" Text="0" Foreground="Yellow"/>
+                <TextBlock Text=", Speed: " Foreground="Yellow"/>
+                <TextBlock x:Name="SpeedLabel" Text="0" Foreground="Yellow"/>
+                <TextBlock Text=", F1: " Foreground="Yellow"/>
+                <TextBlock x:Name="F1Label" Text="0" Foreground="Red"/>
+                <TextBlock Text=", F2: " Foreground="Yellow"/>
+                <TextBlock x:Name="F2Label" Text="0" Foreground="Red"/>
+            </StackPanel>
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+            <TextBlock Text="Arduino " Foreground="Yellow"/>
+            <TextBlock x:Name="ArduinoStatusText" Text="disconnected!" Foreground="IndianRed"/>
+
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+            <TextBlock Text="Data sended: " Foreground="Yellow"/>
+            <TextBlock x:Name="TimeSendText" Text="" Foreground="Yellow"/>
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+            <TextBlock Text="Data status: " Foreground="Yellow"/>
+            <TextBlock x:Name="DataStatusText" Text="None" Foreground="Yellow"/>
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+        </StackPanel>
+        
+        
+        <Border x:Name="AboutBorder" Background="#CC000000" Visibility="Collapsed">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/icons8-coder-in-hoodie-96.ico" Height="150" Margin="0 0 50 0"/>
+                    <StackPanel>
+                        <Label Content="ARCA" FontWeight="Bold" FontSize="90" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
+                        <Label Content="Arduino remote controlled app" FontSize="19" FontStyle="Italic" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
+                        <Label Content="Created by Artem Hnatiuk" FontSize="19" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
+                        <Button Content="Hide" Height="50" Width="100" FontSize="19" BorderThickness="0" Background="#33000000" Foreground="WhiteSmoke" Click="Button_Click_2"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

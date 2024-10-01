@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARCA_WPF_F", "ARCA_WPF_F.csproj", "{9544A1D1-B4F2-4378-AD1C-EE0BEC411F4B}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ARCA-Setup", "..\ARCA-Setup\ARCA-Setup.vdproj", "{3A7BB0BC-B9AF-4962-8C4F-2E9335120672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9544A1D1-B4F2-4378-AD1C-EE0BEC411F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9544A1D1-B4F2-4378-AD1C-EE0BEC411F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9544A1D1-B4F2-4378-AD1C-EE0BEC411F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9544A1D1-B4F2-4378-AD1C-EE0BEC411F4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A7BB0BC-B9AF-4962-8C4F-2E9335120672}.Debug|Any CPU.ActiveCfg = Debug
+		{3A7BB0BC-B9AF-4962-8C4F-2E9335120672}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D796AD5-36E8-4BDA-B13E-89CBFC9891D9}
+	EndGlobalSection
+EndGlobal

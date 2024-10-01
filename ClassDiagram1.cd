@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ARCA_WPF_F.Controllers.MainController">
+    <Position X="9.5" Y="1.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="ARCA_WPF_F.Controllers.MainController.DataSentHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\MainController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="ARCA_WPF_F.Controllers.MainController.DataUpdatedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\MainController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>SAASAAGAAhAEAABAEAAAIRCgAAiIAAIgAABQEQAAEAA=</HashCode>
+      <FileName>Controllers\MainController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="camera" />
+      <Field Name="settings" />
+      <Field Name="arduino" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ARCA_WPF_F.BitmapHelpers">
+    <Position X="4.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Classess\BitmapHelpers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.CameraController">
+    <Position X="7.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>DIEAAACAAAAgAABAMAAAIAAAoAIAAAGACCAAAQBAEAA=</HashCode>
+      <FileName>Controllers\Classess\CameraController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.SettingsController">
+    <Position X="12" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAgAAAAAIAAAQAAAAIAIAAAAEAAIAAAAAAAEAA=</HashCode>
+      <FileName>Controllers\Classess\SettingsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.ArduinoController">
+    <Position X="12" Y="1.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="ARCA_WPF_F.Controllers.Classess.ArduinoController.DataSentHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\Classess\Arduino\ArduinoController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="ARCA_WPF_F.Controllers.Classess.ArduinoController.DataUpdatedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\Classess\Arduino\ArduinoController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AABFAAMgCACAEAAEAAACAAABCRgISgAgBEAAAAECABA=</HashCode>
+      <FileName>Controllers\Classess\Arduino\ArduinoController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="dataStruct" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="comlist" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.Arduino.Com">
+    <Position X="17" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAIABAA=</HashCode>
+      <FileName>Controllers\Classess\Arduino\Com.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.Arduino.DataStruct">
+    <Position X="17" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAhEAAAAABEAAQICAQEAAAAAAQCAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Classess\Arduino\DataStruct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.MovementController">
+    <Position X="7.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAkAAAAIAAAABAAAAAAIAAQgAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Controllers\Classess\Movement\MovementController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="keyboardController" />
+      <Field Name="gamepadController" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.KeyboardController" Collapsed="true">
+    <Position X="4.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Classess\Movement\KeyboardController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ARCA_WPF_F.Controllers.Classess.GamepadController" Collapsed="true">
+    <Position X="4.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAACAAACAAAhAAAAAQAAAAIIAhCAEIAQAAEAgAA=</HashCode>
+      <FileName>Controllers\Classess\Movement\GamepadController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
