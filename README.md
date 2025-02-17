@@ -4,8 +4,8 @@ This is my team diploma project, which allow to connect Arduino based remote dev
 
  <hr>
 
-![ARCA Main window](/path/to/image.png "ARCA Main window")
-![ARCA connected to public camera](/path/to/image.png "Some public camera")
+![ARCA Main window](/images/mainwindow-controllerConnected.jpg "ARCA Main window")
+![ARCA connected to public camera](/images/mainwindow-connectedToSomeCamera.jpg "Some public camera")
 
 You can find some ip for testing here:
 https://github.com/fury999io/public-ip-cams?tab=readme-ov-file
