@@ -5,6 +5,7 @@ using System.Windows.Media;
 using ARCA_WPF_F.Controllers;
 using ARCA_WPF_F.Controllers.Classess.Arduino;
 using ARCA_WPF_F.Resources;
+using InputMode = ARCA_WPF_F.Controllers.Classess.InputMode;
 
 namespace ARCA_WPF_F
 {
@@ -30,17 +31,28 @@ namespace ARCA_WPF_F
 
         private void UIConnectedControllerEvent()
         {
-            if(mc != null )
+            if (mc == null) return;
+            var currentMode = mc.GetCurrentInputMode();
+
+            switch (currentMode)
             {
-                if(mc.IsControllerConnected()) {
-                    Gamepad_Disc_Label.Visibility = Visibility.Collapsed;
-                    DataDebugLabel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    Gamepad_Disc_Label.Visibility = Visibility.Visible;
+                case InputMode.None:
+                    InputStatusText.Text = "NO INPUT DEVICE";
+                    InputStatusText.Foreground = Brushes.IndianRed;
                     DataDebugLabel.Visibility = Visibility.Collapsed;
-                }
+                    break;
+
+                case InputMode.Keyboard:
+                    InputStatusText.Text = "KEYBOARD ACTIVE";
+                    InputStatusText.Foreground = Brushes.Cyan; 
+                    DataDebugLabel.Visibility = Visibility.Visible;
+                    break;
+
+                case InputMode.Gamepad:
+                    InputStatusText.Text = "GAMEPAD ACTIVE";
+                    InputStatusText.Foreground = Brushes.LightGreen;
+                    DataDebugLabel.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -88,17 +100,16 @@ namespace ARCA_WPF_F
         {
             this.Dispatcher.Invoke(() =>
             {
-                DataStruct datas = data;
+                int speedPower = Math.Abs(data.accelerate - data.brake);
 
-                string steer = datas.steer.ToString();
-                string speed = (Math.Abs(datas.accelerate - datas.brake)).ToString();  
-                
-                SteerLabel.Text = steer;
-                SpeedLabel.Text = speed;
-                F1Label.Text = datas.F1? "1" : "0";
-                F1Label.Foreground = datas.F1 ? Brushes.Green : Brushes.Red;
-                F2Label.Text = datas.F2? "1" : "0";
-                F2Label.Foreground = datas.F2 ? Brushes.Green : Brushes.Red;
+                SteerLabel.Text = data.steer.ToString();
+                SpeedLabel.Text = speedPower.ToString();
+
+                F1Label.Text = data.F1 ? "1" : "0";
+                F1Label.Foreground = data.F1 ? Brushes.LightGreen : Brushes.IndianRed;
+
+                F2Label.Text = data.F2 ? "1" : "0";
+                F2Label.Foreground = data.F2 ? Brushes.LightGreen : Brushes.IndianRed;
             });
         }
 

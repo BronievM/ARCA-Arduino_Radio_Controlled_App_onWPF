@@ -37,12 +37,12 @@ namespace ARCA_WPF_F.Controllers
 
         public void SetDebug(bool IsDebugOpen)
         {
-            settings.Debug = IsDebugOpen;
+            settings.IsDebugOpen = IsDebugOpen;
         }
 
         public bool GetDebug()
         {
-            return settings.Debug;
+            return settings.IsDebugOpen;
         }
 
         // >------------------
@@ -75,9 +75,7 @@ namespace ARCA_WPF_F.Controllers
         {
 
             List<String> list = new List<String>();
-            List<Com> comList = new List<Com>();
-
-            comList = arduino.ListArduinoComs();
+            List<Com> comList = arduino.ListArduinoComs();
 
             if (comList.Count != 0)
             {
@@ -121,20 +119,20 @@ namespace ARCA_WPF_F.Controllers
 
         public void SetCameraIP(string IP)
         {
-            settings.SaveIP(IP);
+            settings.IP = IP;
         }
 
         public void ConnectCamera()
         {
 //            if (String.IsNullOrWhiteSpace(settings.GetIP())) return;
-            camera.SetCameraIP(settings.GetIP());   
+            camera.SetCameraIP(settings.IP);   
             camera.ConnectCamera();
         }
 
         public void ConnectCamera(string IP)
         {
-            settings.SaveIP(IP);
-            camera.SetCameraIP(settings.GetIP());
+            settings.IP = IP;
+            camera.SetCameraIP(settings.IP);
             camera.ConnectCamera();
         }
 
@@ -159,6 +157,10 @@ namespace ARCA_WPF_F.Controllers
         //
         // >--------------------
 
+        public void ConnectKeyboard()
+        {
+            movement.StartKeyboard();
+        }
         public void ConnectGamepad(string id)
         {
             movement.ConnectController(id);
@@ -179,10 +181,20 @@ namespace ARCA_WPF_F.Controllers
             movement.DisconnectController();
         }
 
+        public void DisconnectKeyboard()
+        {
+            movement.StopKeyboard();
+        }
+
         private void MovementController_DataUpdated(DataStruct data)
         {
             arduino.ChangeData(data);
             arduino.OnDataUpdated(data);
+        }
+
+        public InputMode GetCurrentInputMode()
+        {
+            return movement.CurrentMode;
         }
     }
 }

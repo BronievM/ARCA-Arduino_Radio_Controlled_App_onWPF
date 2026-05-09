@@ -23,10 +23,11 @@
 
         <StackPanel x:Name="DebugPanel" Margin="10 0 10 0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal"  Background="#B2000000" Visibility="Visible">
             <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
-            <StackPanel x:Name="Gamepad_Disc_Label" Visibility="Collapsed">
-                <TextBlock Text="GAMEPAD DISCONNECTED " Foreground="Red"/>
+            <StackPanel x:Name="InputStatusPanel" Visibility="Visible">
+                <TextBlock x:Name="InputStatusText" Text="NO INPUT DEVICE" Foreground="IndianRed" FontWeight="Bold"/>
             </StackPanel>
-            <StackPanel x:Name="DataDebugLabel" Orientation="Horizontal">
+            <Rectangle VerticalAlignment="Stretch" Width="2" Stroke="Yellow" Margin="10 0 10 0"/>
+            <StackPanel x:Name="DataDebugLabel" Visibility="Collapsed" Orientation="Horizontal">
                 <TextBlock Text="Steer: " Foreground="Yellow"/>
                 <TextBlock x:Name="SteerLabel" Text="0" Foreground="Yellow"/>
                 <TextBlock Text=", Speed: " Foreground="Yellow"/>
@@ -57,7 +58,7 @@
                     <StackPanel>
                         <Label Content="ARCA" FontWeight="Bold" FontSize="90" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
                         <Label Content="Arduino remote controlled app" FontSize="19" FontStyle="Italic" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
-                        <Label Content="Created by Artem Hnatiuk" FontSize="19" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
+                        <Label Content="Created by Broniev" FontSize="19" HorizontalAlignment="Center" Foreground="WhiteSmoke"/>
                         <Button Content="Hide" Height="50" Width="100" FontSize="19" BorderThickness="0" Background="#33000000" Foreground="WhiteSmoke" Click="Button_Click_2"/>
                     </StackPanel>
                 </StackPanel>

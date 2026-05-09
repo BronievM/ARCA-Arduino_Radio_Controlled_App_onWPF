@@ -361,3 +361,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Arduino IDE temporary files
+/Arduino/**/build/
+/Arduino/**/libraries/
+*.hex
+*.elf
+
+# Local app settings (if you keep test configs in the repo)
+/ARCA_WPF_F/bin/
+/ARCA_WPF_F/obj/
+settings.json

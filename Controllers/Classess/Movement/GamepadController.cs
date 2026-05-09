@@ -18,6 +18,12 @@ namespace ARCA_WPF_F.Controllers.Classess
         private bool previousButton0State = false;
         private bool IsControllerConnected = false;
 
+        // Constants for deadzones (stick drift cutoff)
+        private const int AxisCenter = 32767;
+        private const int Deadzone = 5000;
+        private const int AxisMin = AxisCenter - Deadzone; // 27767
+        private const int AxisMax = AxisCenter + Deadzone; // 37767
+
         public event Action<JoystickUpdate[]> ControlInputsUpdated;
         public event Action<DataStruct> DataReceived;
 
@@ -89,6 +95,7 @@ namespace ARCA_WPF_F.Controllers.Classess
                     IsXbox = true;
                 }
                 else IsXbox = false;
+
                 connectedController.Properties.BufferSize = 128;
                 connectedController.Acquire();
 
@@ -116,13 +123,16 @@ namespace ARCA_WPF_F.Controllers.Classess
                 if (connectedController != null)
                 {
                     JoystickUpdate[] datas = connectedController.GetBufferedData();
-                    UpdateControlInputs(datas);
-                    OnControlInputsUpdated(datas);
+                    if (datas.Length > 0)
+                    {
+                        UpdateControlInputs(datas);
+                        OnControlInputsUpdated(datas);
+                    }
                 }
             }
             catch (SharpDXException ex)
             {
-                if (ex.HResult == unchecked((int)0x8007001E)) 
+                if (ex.HResult == unchecked((int)0x8007001E))
                 {
                     Disconnect();
                     MessageBox.Show("Controller disconnected");
@@ -150,14 +160,14 @@ namespace ARCA_WPF_F.Controllers.Classess
             var controllerNames = new List<string>();
 
             var devices = directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices)
-                                    .Concat(directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices));
+                                        .Concat(directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices));
 
             foreach (var deviceInstance in devices)
             {
                 controllerNames.Add(deviceInstance.ProductName);
             }
 
-          if (controllerNames.Count == 0) controllerNames.Add("No controllers found");
+            if (controllerNames.Count == 0) controllerNames.Add("No controllers found");
 
             return controllerNames;
         }
@@ -171,60 +181,91 @@ namespace ARCA_WPF_F.Controllers.Classess
         {
             foreach (var state in datas)
             {
-                var effects = connectedController.GetEffects();
+                int val = state.Value;
+
                 switch (state.Offset)
                 {
+                    // LEFT STICK (Steering)
                     case JoystickOffset.X:
-                        data.steer = (byte)(state.Value * 255 / 65535);
-                        break;
-
-                    case JoystickOffset.Z:
-                        if (IsXbox)
+                        if (val > AxisMin && val < AxisMax)
                         {
-                            int zValue = state.Value;
-                            if (zValue >= 32767) data.accelerate = 0;
-                            else data.accelerate = (byte)((32767 - zValue) * 255 / 32767);
+                            data.steer = 127; // Deadzone (dead center)
+                        }
+                        else
+                        {
+                            data.steer = (byte)(val * 255 / 65535);
                         }
                         break;
 
-                    // in case of PS4
-                    case JoystickOffset.RotationY:
-                        if (!IsXbox)
+                    // TRIGGERS OR RIGHT STICK (Depends on the controller)
+                    case JoystickOffset.Z:
+                        if (IsXbox)
                         {
-                            data.accelerate = (byte)(state.Value / 256);
+                            // Logic for Xbox (Triggers or Z axis)
+                            if (val >= 32767) data.accelerate = 0;
+                            else data.accelerate = (byte)((32767 - val) * 255 / 32767);
+                        }
+                        break;
+
+                    // RIGHT STICK (Y axis) or PS4 TRIGGERS
+                    case JoystickOffset.RotationY:
+                        if (IsXbox)
+                        {
+                            // Xbox right stick: Up - Accelerate, Down - Brake
+                            if (val < AxisMin) // Stick pushed up
+                            {
+                                data.accelerate = (byte)((AxisMin - val) * 255 / AxisMin);
+                                data.brake = 0;
+                            }
+                            else if (val > AxisMax) // Stick pushed down
+                            {
+                                data.brake = (byte)((val - AxisMax) * 255 / (65535 - AxisMax));
+                                data.accelerate = 0;
+                            }
+                            else // Deadzone
+                            {
+                                data.accelerate = 0;
+                                data.brake = 0;
+                            }
+                        }
+                        else
+                        {
+                            // PS4 Logic (L2 Trigger)
+                            data.accelerate = (byte)(val / 256);
                         }
                         break;
 
                     case JoystickOffset.RotationX:
                         if (!IsXbox)
                         {
-                            data.brake = (byte)(state.Value / 256);
+                            // PS4 Logic (R2 Trigger)
+                            data.brake = (byte)(val / 256);
                         }
                         break;
 
-                        //
-
+                    // BUTTONS
                     case JoystickOffset.Buttons0:
-                        bool currentButton0State = state.Value != 0;
+                        bool currentButton0State = val != 0;
                         if (!previousButton0State && currentButton0State)
                         {
                             data.F1 = !data.F1;
-                            OnDataReceived(data);
+                            OnDataReceived(data); // Force send on state change
                         }
+                        previousButton0State = currentButton0State; // Update previous state
                         break;
 
                     case JoystickOffset.Buttons1:
-                        data.F2 = state.Value != 0;
+                        data.F2 = val != 0;
                         break;
                 }
             }
-           
+
             OnDataReceived(data);
         }
 
-        private void OnDataReceived(DataStruct data) { 
+        private void OnDataReceived(DataStruct data)
+        {
             DataReceived?.Invoke(data);
         }
     }
-
 }

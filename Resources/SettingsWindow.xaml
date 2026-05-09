@@ -5,50 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ARCA_WPF_F.Resources"
         mc:Ignorable="d"
-        Title="Settings" Height="199" Width="606" Background="Black" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Closed="Window_Closed">
+        Title="Settings" Height="230" Width="650" Background="Black" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Closed="Window_Closed">
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
                 <GroupBox Header="Camera" Foreground="WhiteSmoke" BorderThickness="0.5">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Foreground="WhiteSmoke" Content="IP:" FontSize="16"/>
-                            <TextBox x:Name="IPTextBox" Margin="5 0 0 0" Width="310" Height="18" KeyDown="IPTextBox_KeyDown"/>
+                    <StackPanel Margin="5">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                            <Label Foreground="WhiteSmoke" Content="IP:" FontSize="16" Padding="0" VerticalAlignment="Center"/>
+                            <TextBox x:Name="IPTextBox" Margin="5 0 0 0" Width="310" Height="22" VerticalContentAlignment="Center"
+                                     KeyDown="IPTextBox_KeyDown" 
+                                     GotKeyboardFocus="IPTextBox_GotKeyboardFocus" 
+                                     LostKeyboardFocus="IPTextBox_LostKeyboardFocus"/>
                         </StackPanel>
-                        <Button Content="Connect" Click="Button_Click_2"/>
+                        <Button Content="Save IP" Height="25" Click="Button_Click_2"/>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Margin="0 0.5 0 0" Header="Arduino" Foreground="WhiteSmoke" BorderThickness="0.5">
-                    <StackPanel Orientation="Vertical">
 
-                        <StackPanel Orientation="Horizontal">
-                            <Label  Content="Arduino device" Foreground="WhiteSmoke" FontSize="16"/>
-                            <ComboBox x:Name="ArduinoListComboBox" Width="225" Height="25" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" SelectionChanged="ArduinoListComboBox_SelectionChanged" DropDownOpened="ArduinoListComboBox_DropDownOpened"/>
+                <GroupBox Margin="0 5 0 0" Header="Arduino" Foreground="WhiteSmoke" BorderThickness="0.5">
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                            <Label Content="Device:" Foreground="WhiteSmoke" FontSize="14" Padding="0" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="ArduinoListComboBox" Margin="5 0 0 0" Width="285" Height="25" 
+                                      SelectionChanged="ArduinoListComboBox_SelectionChanged" 
+                                      DropDownOpened="ArduinoListComboBox_DropDownOpened"/>
                         </StackPanel>
-                        <Button x:Name="ConnectButton" Content="Connect" Click="Button_Click_1"/>
+                        <Button x:Name="ConnectButton" Content="Connect" Height="25" Click="Button_Click_1"/>
                     </StackPanel>
                 </GroupBox>
 
             </StackPanel>
-            <GroupBox Header="Controlling" Foreground="WhiteSmoke" BorderThickness="0.5">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Choose device:" Foreground="WhiteSmoke" FontSize="16"/>
-                        <ComboBox Margin="5 0 0 0" Width="100" Height="25" SelectedIndex="0">
-                            <ComboBoxItem Content="Controller"/>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ComboBox x:Name="ControllersComboBox" Width="220" Height="25" SelectedIndex="0" DropDownOpened="ControllersComboBox_Drop" Drop="ControllersComboBox_Drop_1"/>
-                    </StackPanel>
-                    <StackPanel Margin="0 5 0 0" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="Connect" Width="220" Height="35" Click="Button_Click_3"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <ComboBox Margin="1 0 1 0" Visibility="Collapsed"/>
-                    </StackPanel>
-        </StackPanel>
+
+            <GroupBox Header="Controlling" Foreground="WhiteSmoke" BorderThickness="0.5" Margin="5 0 0 0">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
+
+                    <Label Content="Keyboard Control:" Foreground="WhiteSmoke" Padding="0 0 0 2"/>
+                    <Button x:Name="KeyboardConnectButton" Content="Enable Keyboard (WASD)" Width="220" Height="25" Margin="0 0 0 10" Click="KeyboardButton_Click"/>
+
+                    <Label Content="Gamepad Control:" Foreground="WhiteSmoke" Padding="0 0 0 2"/>
+                    <ComboBox x:Name="ControllersComboBox" Width="220" Height="25" Margin="0 0 0 5" 
+                              DropDownOpened="ControllersComboBox_DropDownOpened"/>
+                    <Button x:Name="GamepadConnectButton" Content="Connect Gamepad" Width="220" Height="25" Click="Button_Click_3"/>
+
+                </StackPanel>
             </GroupBox>
+
         </StackPanel>
     </Grid>
 </Window>

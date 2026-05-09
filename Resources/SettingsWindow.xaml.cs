@@ -1,20 +1,11 @@
 ﻿using ARCA_WPF_F.Controllers;
-using ARCA_WPF_F.Controllers.Classess.Arduino;
 using System;
-using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using InputMode = ARCA_WPF_F.Controllers.Classess.InputMode;
 
 namespace ARCA_WPF_F.Resources
 {
@@ -28,36 +19,38 @@ namespace ARCA_WPF_F.Resources
         {
             InitializeComponent();
             this.main = main;
-          
+
+            // Camera IP setup
             if (!string.IsNullOrWhiteSpace(main.GetCameraIP()))
             {
                 IPTextBox.Text = main.GetCameraIP();
             }
 
+            // Arduino setup
             ArduinoListComboBox.ItemsSource = main.ListArduino();
             ArduinoListComboBox.SelectedIndex = 0;
 
-            if(main.CheckArduinoStatus())
+            if (main.CheckArduinoStatus() && main.GetUsedSP() != null)
             {
                 string[] ports = SerialPort.GetPortNames();
-                int selectedIndex = -1;
-                for (int i = 0; i < ports.Length; i++)
+                int selectedIndex = Array.IndexOf(ports, main.GetUsedSP().PortName);
+
+                if (selectedIndex != -1)
                 {
-                    if (ports[i] == main.GetUsedSP().PortName)
-                    {
-                        selectedIndex = i;
-                        break;
-                    }
+                    ArduinoListComboBox.SelectedIndex = selectedIndex;
                 }
-
-                ArduinoListComboBox.SelectedIndex = selectedIndex;
-                ConnectButton.Content = "Disconnect"; 
-              
+                ConnectButton.Content = "Disconnect";
             }
-            else { ConnectButton.Content = "Connect"; }
+            else
+            {
+                ConnectButton.Content = "Connect";
+            }
 
+            // Gamepad setup
             ControllersComboBox.ItemsSource = main.GetGamepadList();
             ControllersComboBox.SelectedIndex = 0;
+
+            UpdateInputUI();
         }
 
         public MainController GetMainController()
@@ -65,14 +58,16 @@ namespace ARCA_WPF_F.Resources
             return this.main;
         }
 
+        // ==========================================
+        // CAMERA IP SETTINGS
+        // ==========================================
+
         private void IPTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.Key == Key.Enter)
             {
                 Save();
             }
-
             else if (e.Key == Key.Escape)
             {
                 if (!IPChanged) return;
@@ -112,13 +107,21 @@ namespace ARCA_WPF_F.Resources
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        // ==========================================
+        // WINDOW EVENTS
+        // ==========================================
+
+        private void Button_Click(object sender, RoutedEventArgs e) // Close Window Button
         {
             this.Close();
-
         }
 
         private void Window_Closed(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e) // Save Button
         {
             Save();
         }
@@ -127,11 +130,28 @@ namespace ARCA_WPF_F.Resources
         {
             ArduinoListComboBox.ItemsSource = main.ListArduino();
             ControllersComboBox.ItemsSource = main.GetGamepadList();
+
             if (main.CheckArduinoStatus()) { ConnectButton.Content = "Disconnect"; }
             else { ConnectButton.Content = "Connect"; }
+
+            UpdateInputUI();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        // ==========================================
+        // ARDUINO CONNECTION
+        // ==========================================
+
+        private void ArduinoListComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            UpdateDynUI();
+        }
+
+        private void ArduinoListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Empty intentionally to prevent Bluetooth lag
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) // Arduino Connect/Disconnect
         {
             bool isArduinoConnected = main.CheckArduinoStatus();
 
@@ -144,7 +164,7 @@ namespace ARCA_WPF_F.Resources
                         MessageBox.Show("No COM port selected!");
                         return;
                     }
-                    else if (string.IsNullOrEmpty(ArduinoListComboBox.Items[0]?.ToString()))
+                    else if (string.IsNullOrEmpty(ArduinoListComboBox.Items[0]?.ToString()) || ArduinoListComboBox.Items[0].ToString().Contains("not found"))
                     {
                         ArduinoListComboBox.SelectedIndex = 0;
                         MessageBox.Show("Arduino not found, connect it to pc");
@@ -167,7 +187,6 @@ namespace ARCA_WPF_F.Resources
                         {
                             ConnectButton.Content = "Disconnect";
                             MessageBox.Show("Connected!");
-                            return;
                         }
                         else
                         {
@@ -182,48 +201,66 @@ namespace ARCA_WPF_F.Resources
             }
             else
             {
-                if (isArduinoConnected)
+                main.DisconnectArduino();
+                ArduinoListComboBox.ItemsSource = main.ListArduino();
+                MessageBox.Show("Disconnected!");
+                ArduinoListComboBox.SelectedIndex = 0;
+                ConnectButton.Content = "Connect";
+            }
+        }
+
+        // ==========================================
+        // MOVEMENT CONTROLS (GAMEPAD & KEYBOARD)
+        // ==========================================
+
+        private void ControllersComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            // Правильна подія для оновлення списку геймпадів при відкритті ComboBox
+            ControllersComboBox.ItemsSource = main.GetGamepadList();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e) // Gamepad Connect/Disconnect
+        {
+            if (main.GetCurrentInputMode() == ARCA_WPF_F.Controllers.Classess.InputMode.Gamepad)
+            {
+                main.DisconnectGamepad();
+                MessageBox.Show("Gamepad disconnected.");
+            }
+            else
+            {
+                if (ControllersComboBox.SelectedItem != null && ControllersComboBox.SelectedIndex != -1)
                 {
-                    main.DisconnectArduino();
-                    ArduinoListComboBox.ItemsSource = main.ListArduino();
-                    MessageBox.Show("Disconnected!");
-                    ArduinoListComboBox.SelectedIndex = 0;
-                    ConnectButton.Content = "Connect";
+                    main.ConnectGamepad(ControllersComboBox.SelectedItem.ToString());
+                }
+                else
+                {
+                    MessageBox.Show("Please select a gamepad from the list.");
                 }
             }
+            UpdateInputUI();
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void KeyboardButton_Click(object sender, RoutedEventArgs e)
         {
-            Save();
-        }
-
-        private void ArduinoListComboBox_DropDownOpened(object sender, EventArgs e)
-        {
-            UpdateDynUI();
-        }
-
-        private void ArduinoListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // UpdateDynUI(); - Сповільнювало роботу при ввімкненому Bluetooth
-        }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            if (ControllersComboBox.SelectedItem != null && ControllersComboBox.SelectedIndex != -1)
+            if (main.GetCurrentInputMode() == InputMode.Keyboard)
             {
-                main.ConnectGamepad(ControllersComboBox.SelectedItem.ToString());
+                main.DisconnectKeyboard();
+                MessageBox.Show("Keyboard control disabled.");
             }
+            else
+            {
+                main.ConnectKeyboard();
+                MessageBox.Show("Keyboard control enabled! Use WASD or Arrows. Space - F1, Shift - F2");
+            }
+            UpdateInputUI();
         }
 
-        private void ControllersComboBox_Drop(object sender, EventArgs e)
+        private void UpdateInputUI()
         {
-            ControllersComboBox.ItemsSource = main.GetGamepadList();
+            /* GamepadConnectButton.Content = (main.GetCurrentInputMode() == InputMode.Gamepad) ? "Disconnect Gamepad" : "Connect Gamepad";
+             * KeyboardConnectButton.Content = (main.GetCurrentInputMode() == InputMode.Keyboard) ? "Disable Keyboard" : "Enable Keyboard";
+             */
         }
 
-        private void ControllersComboBox_Drop_1(object sender, DragEventArgs e)
-        {
-            ControllersComboBox.ItemsSource = main.GetGamepadList();
-        }
     }
 }

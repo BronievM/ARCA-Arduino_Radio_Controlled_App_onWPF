@@ -4,70 +4,56 @@ using Newtonsoft.Json;
 
 namespace ARCA_WPF_F.Controllers.Classess
 {
-    internal class SettingsController
+    public class SettingsController
     {
-        [JsonProperty]
-        private string IP;
-        [JsonProperty]
-        private bool IsDebugOpen;
+        public string IP { get; set; } = "192.168.0.1"; 
+        public bool IsDebugOpen { get; set; } = false;
+
         private static readonly string directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Broniev", "ARCA-Saves", "B-v.1");
         private static readonly string filePath = Path.Combine(directoryPath, "settings.json");
 
         public SettingsController() { }
-        public void SaveIP(string IP)
-        {
-           this.IP = IP;
-        }
-
-        public string GetIP() { 
-            return this.IP; 
-        }
-
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
-
-        public static SettingsController FromJson(string json)
-        {
-            return JsonConvert.DeserializeObject<SettingsController>(json);
-        }
 
         public void SaveToFile()
         {
-            string json = this.ToJson();
-            string directoryPath = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(directoryPath))
+            try
             {
-                Directory.CreateDirectory(directoryPath);
-            }
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
 
-            File.WriteAllText(filePath, json);
+                // Formatting.Indented makes the JSON file human-readable
+                string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+            }
+            catch (Exception ex)
+            {
+                // Prevent app crash if file is locked or access is denied
+                System.Windows.MessageBox.Show($"Error saving settings: {ex.Message}", "Settings Error");
+            }
         }
 
         public static SettingsController LoadFromFile()
         {
-            if (File.Exists(filePath))
+            try
             {
-                string json = File.ReadAllText(filePath);
-                return FromJson(json);
-            }
-            else
-            {
-                return new SettingsController();
-            }
-        }
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    var settings = JsonConvert.DeserializeObject<SettingsController>(json);
 
-        public bool Debug
-        {
-            get
-            {
-                return this.IsDebugOpen;
+                    // Return loaded settings, or new instance if deserialization failed (null)
+                    return settings ?? new SettingsController();
+                }
             }
-            set
+            catch (Exception ex)
             {
-                this.IsDebugOpen = value;
+                System.Windows.MessageBox.Show($"Error loading settings: {ex.Message}\nDefault settings will be used.", "Settings Error");
             }
+
+            // Return default settings if file doesn't exist or is corrupted
+            return new SettingsController();
         }
     }
 }

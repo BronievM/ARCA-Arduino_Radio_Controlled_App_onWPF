@@ -33,7 +33,7 @@ namespace ARCA_WPF_F.Controllers.Classess
             dataStruct = new DataStruct();
             comlist = new List<Com>();
 
-            dataTimer = new System.Timers.Timer(100); // Interval is in milliseconds, so 1000 ms = 1 second
+            dataTimer = new System.Timers.Timer(100);
             dataTimer.Elapsed += OnTimedEvent;
             dataTimer.AutoReset = true;
             dataTimer.Enabled = false;
@@ -127,11 +127,50 @@ namespace ARCA_WPF_F.Controllers.Classess
             comlist = new List<Com>();
             string[] ports = SerialPort.GetPortNames();
 
-            if (ports.Length != 0)
+            if (ports.Length == 0) return comlist;
+
+            try
+            {
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Caption LIKE '%(COM%'"))
+                {
+                    var managementObjects = searcher.Get();
+
+                    foreach (string port in ports)
+                    {
+                        bool isBluetooth = false;
+                        string description = port + " (Info not found)";
+
+                        foreach (ManagementObject queryObj in managementObjects)
+                        {
+                            string caption = queryObj["Caption"]?.ToString() ?? "";
+                            string desc = queryObj["Description"]?.ToString() ?? "Unknown Device";
+
+                            if (caption.Contains($"({port})"))
+                            {
+                                if (caption.Contains("Bluetooth") || desc.Contains("Bluetooth") || caption.Contains("BTHENUM"))
+                                {
+                                    isBluetooth = true;
+                                }
+                                else
+                                {
+                                    description = $"{port} ({desc})";
+                                }
+                                break;
+                            }
+                        }
+
+                        if (!isBluetooth)
+                        {
+                            comlist.Add(new Com(port, description));
+                        }
+                    }
+                }
+            }
+            catch
             {
                 foreach (string port in ports)
                 {
-                    comlist.Add(new Com(port, GetComPortDescription(port)));
+                    comlist.Add(new Com(port, port + " (Unknown)"));
                 }
             }
 
@@ -141,17 +180,27 @@ namespace ARCA_WPF_F.Controllers.Classess
         public Com GetComByLocalID(int ID)
         {
             List<Com> list = ListArduinoComs();
-            return comlist[ID];
+            if (ID >= 0 && ID < list.Count)
+            {
+                return comlist[ID];
+            }
+            return null;
         }
 
         public string GetComPortDescription(string portName)
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_SerialPort WHERE DeviceID = '" + portName + "'");
-
-            foreach (ManagementObject queryObj in searcher.Get())
+            try
             {
-                return $"{queryObj["DeviceID"]} ({queryObj["Description"]})";
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher($"SELECT * FROM Win32_PnPEntity WHERE Caption LIKE '%({portName})%'"))
+                {
+                    foreach (ManagementObject queryObj in searcher.Get())
+                    {
+                        string desc = queryObj["Description"]?.ToString() ?? "Unknown Device";
+                        return $"{portName} ({desc})";
+                    }
+                }
             }
+            catch { }
 
             return portName + " (Info not found)";
         }
@@ -172,18 +221,21 @@ namespace ARCA_WPF_F.Controllers.Classess
             {
                 return false;
             }
-            else
+
+            if (UsedPort == null)
             {
-                try
-                {
-                    UsedPort.Open();
-                    UsedPort.Close();
-                    return false;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    return true;
-                }
+                return false;
+            }
+
+            try
+            {
+                UsedPort.Open();
+                UsedPort.Close();
+                return false;
+            }
+            catch
+            {
+                return true;
             }
         }
 
